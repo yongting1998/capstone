@@ -11,7 +11,7 @@ LarkinToKulaiData = json.load(fLarkinToKulai)
 
 colNames=['id', 'trip_id', 'bus_line_id', 'socket_date', 'socket_datetime', 'lat', 'long', 'bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'distance', 'speed', 'bearing', 'status','created', 'updated','direction']
 
-df = pd.read_csv ('./dataset_direction/202202_direction.csv', names=colNames, skiprows=1)
+df = pd.read_csv ('./dataset_direction/202203_direction.csv', names=colNames, skiprows=1)
 
 df = df.reset_index()
 for index, row in df.iterrows():
@@ -29,8 +29,8 @@ for index, row in df.iterrows():
                 break
     if not check:
         df.drop(index, inplace=True)
-        
-df.to_csv('./dataset_onRoute/202202_onRoute.csv')
+
+df.to_csv('./dataset_onRoute/202203_onRoute.csv')
 
 plt.scatter(x=df['lat'], y=df['long'])
 plt.show()
