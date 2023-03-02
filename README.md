@@ -8,3 +8,11 @@ df["direction"]
 2 = Larkin to Kulai
 3 = Kulai Station
 4 = Larkin Station
+
+route #6 is Kulai To Larkin
+route #7 is Larkin To Kulai
+
+get direction first (dataset_direction)
+get if points are on route (dataset_onRoute)
+remove repeated bus stops, take depature only
+get day of week, hour, minute, second (dataset_day)

@@ -18,7 +18,9 @@ plt.show()
             
 # colNames=['id', 'trip_id', 'bus_line_id', 'socket_date', 'socket_datetime', 'lat', 'long', 'bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'distance', 'speed', 'bearing', 'status','created', 'updated','direction']
 
-# df = pd.read_csv ('./dataset_onRoute/202202_onRoute.csv', names=colNames, skiprows=1)
+# df = pd.read_csv ('./dataset_direction/202203_direction.csv', names=colNames, skiprows=1)
+# df['id'] = df['id'].apply(lambda x: float(x.split()[0].replace("'", '')))
+# df = df.loc[df['id'] < 268155922]
 # plt.scatter(x=df['lat'], y=df['long'])
 # plt.show()
 
