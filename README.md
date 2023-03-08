@@ -12,7 +12,11 @@ df["direction"]
 route #6 is Kulai To Larkin
 route #7 is Larkin To Kulai
 
-get direction first (dataset_direction)
-get if points are on route (dataset_onRoute)
-get bus stops and remove repeated bus stops, take depature only
-get time taken from station to bus stop (seconds)
+1. get direction first (dataset_direction)
+2. get if points are on route (dataset_onRoute)
+3. get bus stops and remove repeated bus stops, take depature only
+4. get time taken from station to bus stop (seconds)
+5. remove outliers (dataset_outlier)
+
+extreme outliers found in 202203_time.csv
+clean outliers with interquartile range
