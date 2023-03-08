@@ -14,5 +14,5 @@ route #7 is Larkin To Kulai
 
 get direction first (dataset_direction)
 get if points are on route (dataset_onRoute)
-remove repeated bus stops, take depature only
-get day of week, hour, minute, second (dataset_day)
+get bus stops and remove repeated bus stops, take depature only
+get time taken from station to bus stop (seconds)

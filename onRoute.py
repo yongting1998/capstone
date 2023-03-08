@@ -14,7 +14,7 @@ colNames=['id', 'trip_id', 'bus_line_id', 'socket_date', 'socket_datetime', 'lat
 
 for x in dataNames:
     df = pd.read_csv ('./dataset_direction/' + x + '_direction.csv', names=colNames, skiprows=1)
-    df = df [600000:]
+    #df = df [600000:]
     df = df.reset_index()
     for index, row in df.iterrows():
         print(index)
