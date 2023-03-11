@@ -17,6 +17,7 @@ route #7 is Larkin To Kulai
 3. get bus stops and remove repeated bus stops, take depature only
 4. get time taken from station to bus stop (seconds)
 5. remove outliers (dataset_outlier)
+6. get time of day
 
 extreme outliers found in 202203_time.csv
 clean outliers with interquartile range

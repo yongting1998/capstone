@@ -14,7 +14,7 @@ countX = 0
 countY = 0
 for x in dataNames:
     print(x)
-    df = pd.read_csv ('../dataset_time/'+ x + '_time.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset_timeTaken/'+ x + '_timeTaken.csv', names=colNames, skiprows=1)
 
     df = df.drop(['index'], axis=1)
     

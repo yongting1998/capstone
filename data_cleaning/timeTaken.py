@@ -27,4 +27,4 @@ for x in dataNames:
         else:
             df.at[index, 'time_taken'] = int((pd.to_datetime(row['socket_datetime']) - last_dt).total_seconds())
 
-    df.to_csv('./dataset_time/' + x  + '_time.csv', index=False)
+    df.to_csv('./dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)
