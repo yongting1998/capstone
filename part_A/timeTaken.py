@@ -5,7 +5,7 @@ colNames=['index','socket_date','socket_datetime','lat','long','distance','speed
 dataNames=['202105', '202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201','202202','202203']
 for x in dataNames:
     print(x)
-    df = pd.read_csv ('./dataset_busStop/' + x + '_busStop.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset/dataset_busStop/' + x + '_busStop.csv', names=colNames, skiprows=1)
 
     # df.drop(['id', 'trip_id', 'bus_line_id','bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'bearing', 'status','created', 'updated' ], axis=1, inplace=True)
 
@@ -27,4 +27,4 @@ for x in dataNames:
         else:
             df.at[index, 'time_taken'] = int((pd.to_datetime(row['socket_datetime']) - last_dt).total_seconds())
 
-    df.to_csv('./dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)
+    df.to_csv('../dataset/dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)

@@ -90,7 +90,7 @@ def scale(data):
 
 colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken', 'day_of_week', 'minuteOfDay']
 
-df = pd.read_csv ('./dataset_minute/202203_minute.csv', names=colNames, skiprows=1)
+df = pd.read_csv ('../dataset/dataset_minute/202203_minute.csv', names=colNames, skiprows=1)
 df['time_taken'] = df['time_taken'].astype('int')
 df['busStop'] = df['busStop'].astype('int')
 
@@ -98,6 +98,6 @@ X, y = scale(df[['busStop', 'day_of_week','minuteOfDay', 'time_taken']])
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-# trainData(X_test, y_test, X_train, y_train)
-trainParameters(X_test, y_test, X_train, y_train)
+trainData(X_test, y_test, X_train, y_train)
+#trainParameters(X_test, y_test, X_train, y_train)
 
