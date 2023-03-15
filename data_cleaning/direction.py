@@ -5,7 +5,7 @@ dataNames=['202105','202106', '202107', '202108', '202109', '202110', '202111', 
 colNames=['id', 'trip_id', 'bus_line_id', 'socket_date', 'socket_datetime', 'lat', 'long', 'bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'distance', 'speed', 'bearing', 'status','created', 'updated']
 
 for x in dataNames:
-    df = pd.read_csv ('./dataset/' + x + '.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset/dataset_original/' + x + '.csv', names=colNames, skiprows=1)
     df["lat"] = df["lat"].str[1:].astype(float)
     df["long"] = df["long"].str[:-1].astype(float)
 
@@ -36,4 +36,4 @@ for x in dataNames:
                 df.at[index, 'direction'] = 0
 
     df["direction"] = df["direction"].astype(int)
-    df.to_csv('./dataset_direction/' + x + '_direction.csv')
+    df.to_csv('../dataset/dataset_direction/' + x + '_direction.csv')

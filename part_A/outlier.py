@@ -14,7 +14,7 @@ countX = 0
 countY = 0
 for x in dataNames:
     print(x)
-    df = pd.read_csv ('../dataset_time/'+ x + '_time.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset/dataset_timeTaken/'+ x + '_timeTaken.csv', names=colNames, skiprows=1)
 
     df = df.drop(['index'], axis=1)
     
@@ -29,8 +29,8 @@ for x in dataNames:
 
     df = df[(df.time_taken < 10000) & (df.time_taken > 0)]
     
-    df.to_csv('../dataset_outlier/' + x + '_outlier.csv', index=False)
-    df.to_csv('../dataset_outlier/full_outlier.csv', index=False, mode='a')
+    df.to_csv('../dataset/dataset_outlier/' + x + '_outlier.csv', index=False)
+    df.to_csv('../dataset/dataset_outlier/full_outlier.csv', index=False, mode='a')
 
     # cols = ['time_taken']
 
@@ -48,7 +48,7 @@ countY = 0
 colNames.remove('index')
 for x in dataNames:
     print(x)
-    df = pd.read_csv ('../dataset_outlier/'+ x + '_outlier.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset/dataset_outlier/'+ x + '_outlier.csv', names=colNames, skiprows=1)
     axis[countX, countY].plot(df['time_taken'])
     print(countX,countY)
     if countY == 2:

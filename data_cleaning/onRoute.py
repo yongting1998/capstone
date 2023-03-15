@@ -4,16 +4,16 @@ import json
 import numpy as np
 
 
-fKulaiToLarkin = open('KulaiToLarkin.json')
+fKulaiToLarkin = open('../dataset/KulaiToLarkin.json')
 KulaiToLarkinData = json.load(fKulaiToLarkin)
-fLarkinToKulai = open('LarkinToKulai.json')
+fLarkinToKulai = open('../dataset/LarkinToKulai.json')
 LarkinToKulaiData = json.load(fLarkinToKulai)
 
 dataNames=['202105']
 colNames=['id', 'trip_id', 'bus_line_id', 'socket_date', 'socket_datetime', 'lat', 'long', 'bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'distance', 'speed', 'bearing', 'status','created', 'updated','direction']
 
 for x in dataNames:
-    df = pd.read_csv ('./dataset_direction/' + x + '_direction.csv', names=colNames, skiprows=1)
+    df = pd.read_csv ('../dataset/dataset_direction/' + x + '_direction.csv', names=colNames, skiprows=1)
     #df = df [600000:]
     df = df.reset_index()
     for index, row in df.iterrows():
@@ -34,4 +34,4 @@ for x in dataNames:
         if not check:
             df.drop(index, inplace=True)
 
-    df.to_csv('./dataset_onRoute/' + x + '_onRoute.csv', mode='a')
+    df.to_csv('../dataset/dataset_onRoute/' + x + '_onRoute.csv', mode='a')
