@@ -7,14 +7,6 @@ for x in dataNames:
     print(x)
     df = pd.read_csv ('../dataset/dataset_busStop/' + x + '_busStop.csv', names=colNames, skiprows=1)
 
-    # df.drop(['id', 'trip_id', 'bus_line_id','bus_vehicle_id', 'bus_plate', 'station_id', 'station_code', 'bearing', 'status','created', 'updated' ], axis=1, inplace=True)
-
-    # df['socket_date'] = pd.to_datetime(df['socket_date'])
-    # df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
-    # df['day_of_week'] = df['socket_date'].dt.dayofweek
-    # df['hour'] = df['socket_datetime'].dt.hour
-    # df['minute'] = df['socket_datetime'].dt.minute
-    # df['second'] = df['socket_datetime'].dt.second
     df = df.drop(['index'], axis=1)
     df = df.reset_index()
     last_dt = date.today()
@@ -27,4 +19,4 @@ for x in dataNames:
         else:
             df.at[index, 'time_taken'] = int((pd.to_datetime(row['socket_datetime']) - last_dt).total_seconds())
 
-    df.to_csv('../dataset/dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)
+    df.to_csv('../dataset/part_A/dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)

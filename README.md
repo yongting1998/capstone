@@ -23,4 +23,12 @@ route #7 is Larkin To Kulai
 
 talk about the diff models
 bus stop to bus stop
-use distance
+use distance as parameter
+
+
+**bullshit**
+
+try different architecture for NN
+try different activation functions (explain why this or that is better)
+try different models
+try different batch list and epoch
