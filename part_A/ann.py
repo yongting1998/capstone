@@ -33,7 +33,7 @@ def ann(X_test, y_test, X_train, y_train, batch_size, epoch, input_dim):
     
     # Fitting the ANN to the Training set
     model.fit(X_train, y_train ,batch_size = batch_size, epochs = epoch, verbose=1)
-    MAPE = np.mean(100 * (np.abs(y_test-model.predict(X_test))/y_test))
+    MAPE = np.mean(100 * (np.abs(model.predict(X_test))/y_test))
     print(MAPE)
     
     
