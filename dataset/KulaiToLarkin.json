@@ -1127,7 +1127,7 @@
     [1.49599, 103.74395]
   ],
   "stops": [
-    { "loc": [1.66246, 103.59879], "code": 3, "distanceToNext": 650 },
+    { "loc": [1.66246, 103.59879], "code": 6001, "distanceToNext": 650 },
     { "loc": [1.661303, 103.603693], "code": 6002, "distanceToNext": 1100 },
     { "loc": [1.654106, 103.609721], "code": 6003, "distanceToNext": 400 },
     { "loc": [1.650818, 103.611465], "code": 6004, "distanceToNext": 850 },
@@ -1157,6 +1157,6 @@
     { "loc": [1.489553, 103.712125], "code": 6028, "distanceToNext": 1500 },
     { "loc": [1.487051, 103.724357], "code": 6029, "distanceToNext": 400 },
     { "loc": [1.488733, 103.727638], "code": 6030, "distanceToNext": 3600 },
-    { "loc": [1.49599, 103.74395], "code": 4, "distanceToNext": 0 }
+    { "loc": [1.495100, 103.741749], "code": 6031, "distanceToNext": 0 }
   ]
 }

@@ -13,7 +13,7 @@ for x in dataNames:
     for index, row in df.iterrows():
         print(index)
         check = False
-        if row["direction"] == 3 or row['direction'] == 4:
+        if row["busStop"] == 6001 or row['busStop'] == 7001:
             last_dt =  pd.to_datetime(row['socket_datetime'])
             df.at[index, 'time_taken'] = 0
         else:
