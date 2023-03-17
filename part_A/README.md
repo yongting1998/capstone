@@ -8,6 +8,7 @@ terminal to bus stop time taken
 5. remove outliers (dataset_outlier)
 6. get time of day(dataset_timeOfDay)
 7. get time of day in minutes (dataset_minute)
+8. add in distance
 
 extreme outliers found in 202203_time.csv
 clean outliers with interquartile range

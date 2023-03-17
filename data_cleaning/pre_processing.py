@@ -55,13 +55,13 @@ def getBusStops():
         df = df.reset_index()
         last_direction = 0
         for index, row in df.iterrows():
-            print(index)
             if row["direction"] == 1:
                 for point in KulaiToLarkinData['stops']:
                     if(abs(point['loc'][0] - row["lat"]) < 3e-4 and abs(point['loc'][1] - row["long"]) < 3e-4):
                         if last_direction == 2 and point['code'] == 6001:
                             df.at[index, 'busStop'] = 7035
-                            print("WHOHOOO")
+                            df.at[index, 'direction'] = 2
+                            print("End of Route: " + str(index))
                         else:
                             df.at[index, 'busStop'] = point['code']
                         last_direction = 1
@@ -72,7 +72,8 @@ def getBusStops():
                     if(abs(point['loc'][0] - row["lat"]) < 3e-4 and abs(point['loc'][1] - row["long"]) < 3e-4):
                         if last_direction == 1 and point['code'] == 7001:
                             df.at[index, 'busStop'] = 6031
-                            print("WHOHOOO")
+                            df.at[index, 'direction'] = 1
+                            print("End of Route: " + str(index))
                         else:
                             df.at[index, 'busStop'] = point['code']
                         last_direction = 2
