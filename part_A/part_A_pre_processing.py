@@ -116,6 +116,14 @@ def minute():
         df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
         df['minuteOfDay'] = (df['socket_datetime'].dt.hour) * 60 + df['socket_datetime'].dt.minute
 
+        df['lat'] = df['lat'].astype(float)
+        df['long'] = df['long'].astype(float)
+        df['direction'] = df['direction'].astype(int)
+        df['busStop'] = df['busStop'].astype(int)
+        df['time_taken'] = df['time_taken'].astype(int)
+        df['day_of_week'] = df['day_of_week'].astype(int)
+        df['minuteOfDay'] = df['minuteOfDay'].astype(int)
+
         df.to_csv('../dataset/part_A/dataset_minute/' + x  + '_minute.csv', index=False)
         df.to_csv('../dataset/part_A/dataset_minute/full_minute.csv', index=False, mode='a')
 
