@@ -91,6 +91,72 @@ def getBusStops():
         df.to_csv('../dataset/dataset_busStop/' + x + '_busStop.csv', index=False)
 
 
+def cleanDirection():
+    colNames=['index','socket_date','socket_datetime','lat','long','distance','speed','direction','busStop']
+
+    dataNames=['202105','202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201', '202202', '202203']
+    for x in dataNames:
+        print(x)
+        df = pd.read_csv ('../dataset/dataset_busStop/' + x + '_busStop.csv', names=colNames, skiprows=1)
+        df = df.drop(['index'], axis=1)
+        df['busStop'] = df['busStop'].astype(int)
+        df['socket_date'] = pd.to_datetime(df['socket_date'])
+        last_date = df.iloc[0]['socket_date']
+        df = df.reset_index()
+        indexToDrop = []
+        #remove those that is not in full order
+        for index, row in df.iterrows():
+            if row['socket_date'] != last_date:
+                last_date = row['socket_date']
+                if (df.shift(1).loc[index]['busStop'] != 6031 or df.shift(1).loc[index]['busStop'] != 7035):
+                    indexToDrop.append({'depature':999,'index': index})
+            elif row['busStop'] ==  6001:
+                check = True
+                for i in range(1, 31):
+                    if (df.shift(-i).loc[index]['busStop'] != (6001 + i)):
+                        check = False
+                        break
+                if not check:
+                    indexToDrop.append({'depature':6001,'index': index})
+            elif row['busStop'] ==  7001:
+                check = True
+                for i in range(1, 35):
+                    if df.shift(-i).loc[index]['busStop'] != (7001 + i):
+                        check = False
+                        break
+                if not check:
+                    indexToDrop.append({'depature':7001,'index': index})
+            else:
+                if df.shift(1).loc[index]['busStop'] != row['busStop'] - 1:
+                    indexToDrop.append({'depature':999,'index': index})
+        
+        df = df.reset_index()
+        removeCount = 0
+        endCount = 0
+        for index, row in df.iterrows():
+            if (row['busStop'] == 6001 or row['busStop'] == 7001) and index != indexToDrop[0]['index']:
+                removeCount = 0
+            if len(indexToDrop) == 0 and removeCount == 0:
+                break
+            if len(indexToDrop) > 0 and index == indexToDrop[0]['index']:
+                #remove until next terminal or next index to drop
+                endCount = 9999999999999999999999
+                removeCount = 1
+                indexToDrop.pop(0)
+
+            if removeCount != 0:
+                df.drop(index, inplace=True)
+                if removeCount == endCount:
+                    removeCount = 0
+                else:
+                    removeCount += 1
+        print(indexToDrop)
+        if df.iloc[-1]['busStop'] == 6001 or df.iloc[-1]['busStop'] == 7001:
+            df = df[:-1]
+        df.to_csv('../dataset/dataset_clean_direction/' + x + '_clean_direction.csv', index=False)
+
+
 #getDirection()
-getBusStops()
+#getBusStops()
+cleanDirection()
 

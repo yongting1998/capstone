@@ -94,7 +94,7 @@ def scale(data, input_dim):
 
 
 colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken', 'day_of_week', 'minuteOfDay']
-df = pd.read_csv ('../dataset/part_A/dataset_minute/202203_minute.csv', names=colNames, skiprows=1)
+df = pd.read_csv ('../dataset/part_A/dataset_outlier/full_outlier.csv', names=colNames, skiprows=1)
 input_dim = 3
 
 # colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken', 'day_of_week', 'minuteOfDay', 'distanceToNext']

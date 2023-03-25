@@ -3,6 +3,7 @@ from datetime import date
 import datetime as dt
 import matplotlib.pyplot as plt
 import json
+import numpy as np
 
 fKulaiToLarkin = open('../dataset/KulaiToLarkin.json')
 KulaiToLarkinData = json.load(fKulaiToLarkin)
@@ -10,14 +11,14 @@ fLarkinToKulai = open('../dataset/LarkinToKulai.json')
 LarkinToKulaiData = json.load(fLarkinToKulai)
 
 def timeTaken():
-    colNames=['index','socket_date','socket_datetime','lat','long','distance','speed','direction','busStop']
+    colNames=['a','index','socket_date','socket_datetime','lat','long','distance','speed','direction','busStop']
 
     dataNames=['202105', '202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201','202202','202203']
     for x in dataNames:
         print(x)
-        df = pd.read_csv ('../dataset/dataset_busStop/' + x + '_busStop.csv', names=colNames, skiprows=1)
+        df = pd.read_csv ('../dataset/dataset_clean_direction/' + x + '_clean_direction.csv', names=colNames, skiprows=1)
 
-        df = df.drop(['index'], axis=1)
+        df = df.drop(['a','index'], axis=1)
         df = df.reset_index()
         last_dt = date.today()
         for index, row in df.iterrows():
@@ -32,71 +33,12 @@ def timeTaken():
         df.to_csv('../dataset/part_A/dataset_timeTaken/' + x  + '_timeTaken.csv', index=False)
 
 
-
-def outlier():
-    colNames=['index', 'socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken']
-    dataNames=['202105','202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201', '202202', '202203']
-
-    figure, axis = plt.subplots(4, 3)
-    figure.suptitle('before cleaning')
-    countX = 0
-    countY = 0
-    for x in dataNames:
-        print(x)
-        df = pd.read_csv ('../dataset/part_A/dataset_timeTaken/'+ x + '_timeTaken.csv', names=colNames, skiprows=1)
-
-        df = df.drop(['index'], axis=1)
-        
-        
-        axis[countX, countY].plot(df['time_taken'],df['socket_date'])
-        print(countX,countY)
-        if countY == 2:
-            countX += 1
-            countY = 0
-        else:
-            countY += 1
-
-        #df = df[(df.time_taken < 10000) & (df.time_taken >= 0)]
-        
-        cols = ['time_taken']
-
-        Q1 = df[cols].quantile(0.05)
-        Q3 = df[cols].quantile(0.95)
-        IQR = Q3 - Q1
-        df = df[~((df[cols] < (Q1 - 1.5 * IQR)) |(df[cols] > (Q3 + 1.5 * IQR))).any(axis=1)]
-
-
-        
-        df.to_csv('../dataset/part_A/dataset_outlier/' + x + '_outlier.csv', index=False)
-        df.to_csv('../dataset/part_A/dataset_outlier/full_outlier.csv', index=False, mode='a')
-
-
-    plt.show()
-
-    figure, axis = plt.subplots(4, 3)
-    figure.suptitle('before cleaning')
-    countX = 0
-    countY = 0
-    colNames.remove('index')
-    for x in dataNames:
-        print(x)
-        df = pd.read_csv ('../dataset/part_A/dataset_outlier/'+ x + '_outlier.csv', names=colNames, skiprows=1)
-        axis[countX, countY].plot(df['time_taken'], df['socket_date'])
-        print(countX,countY)
-        if countY == 2:
-            countX += 1
-            countY = 0
-        else:
-            countY += 1
-
-    plt.show()
-
 def timeOfDay():
     dataNames=['202105', '202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201','202202','202203']
     colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken']
     for x in dataNames:
         print(x)
-        df = pd.read_csv ('../dataset/part_A/dataset_outlier/' + x + '_outlier.csv', names=colNames, skiprows=1)
+        df = pd.read_csv ('../dataset/part_A/dataset_timeTaken/' + x + '_timeTaken.csv', names=colNames, skiprows=1)
 
         df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
         df['day_of_week'] = df['socket_datetime'].dt.dayofweek
@@ -125,7 +67,70 @@ def minute():
         df['minuteOfDay'] = df['minuteOfDay'].astype(int)
 
         df.to_csv('../dataset/part_A/dataset_minute/' + x  + '_minute.csv', index=False)
-        df.to_csv('../dataset/part_A/dataset_minute/full_minute.csv', index=False, mode='a')
+
+        #remember to manually remove header from dataset as its appending
+        if x != '202203':
+            df.to_csv('../dataset/part_A/dataset_minute/full_minute.csv', index=False, mode='a')
+
+
+def outlier():
+    colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken', 'day_of_week', 'minuteOfDay']
+    df = pd.read_csv ('../dataset/part_A/dataset_minute/full_minute.csv', names=colNames, skiprows=1)
+    listOfBusStops=[]    
+    cols = ['time_taken']
+    figure, axis = plt.subplots(2,2)
+    figure.suptitle('before cleaning')
+    countX = 0
+    countY = 0
+    for i in range(1,32):
+        listOfBusStops.append(6000 + i)
+    for i in range(36):
+        listOfBusStops.append(7000 + i)
+    df['time_taken'] = df['time_taken'].astype(int)
+    print(df[df['time_taken'] > 10000])
+    # df = df.loc[df['time_taken'] < 10000]
+    df_clean = pd.DataFrame()
+    for busStop in listOfBusStops:
+        dfTemp = df.loc[df['busStop'] == busStop]
+        originalSize = int(dfTemp.size)
+        if(busStop > 6001 and busStop < 6006):
+            axis[countX, countY].plot(dfTemp['socket_date'],dfTemp['time_taken'])
+            axis[countX, countY].set_title(busStop)
+            if(countY == 1):
+                countX += 1
+                countY = 0
+            else:
+                countY += 1
+        Q1 = dfTemp[cols].quantile(0.05)
+        Q3 = dfTemp[cols].quantile(0.95)
+        IQR = Q3 - Q1
+        if(busStop != 6001 and busStop != 7001):
+            dfTemp = dfTemp[~((dfTemp[cols] < (Q1 - 1.5 * IQR)) |(dfTemp[cols] > (Q3 + 1.5 * IQR))).any(axis=1)]
+        df_clean = pd.concat([df_clean, dfTemp], sort=False)
+            # print("reduced:  "  + str(originalSize - int(dfTemp.size)))
+
+
+    df_clean.to_csv('../dataset/part_A/dataset_outlier/full_outlier.csv', index=False)
+    # df.to_csv('../dataset/part_A/dataset_outlier/full_outlier.csv', index=False, mode='a')
+
+
+    plt.show()
+    figure, axis = plt.subplots(2,2)
+    figure.suptitle('after cleaning')
+    countX = 0
+    countY = 0
+    for busStop in listOfBusStops:
+        dfTemp = df.loc[df['busStop'] == busStop]
+        if(busStop > 6001 and busStop < 6006):
+            axis[countX, countY].plot(dfTemp['socket_date'],dfTemp['time_taken'])
+            axis[countX, countY].set_title(busStop)
+            if(countY == 1):
+                countX += 1
+                countY = 0
+            else:
+                countY += 1
+
+    plt.show()
 
 def distance():
     dataNames=['202105','202106', '202107', '202108', '202109', '202110', '202111', '202112', '202201', '202202', '202203']
@@ -149,8 +154,9 @@ def distance():
         df.to_csv('../dataset/part_A/dataset_distance/' + x + '_distance.csv', index=False)
 
 
-timeTaken()
+# timeTaken()
+# timeOfDay()
+# minute()
 outlier()
-timeOfDay()
-minute()
+
 # distance()
