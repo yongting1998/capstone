@@ -39,7 +39,7 @@ def ann(X_test, y_test, X_train, y_train, batch_size, epoch, input_dim):
     print(MAPE)
     
     y_pred = model.predict(X_test)
-    model.save('./model')
+    model.save('./model.h5')
     return y_pred
 
 def trainParameters(X_test, y_test, X_train, y_train, input_dim):
@@ -91,8 +91,8 @@ def scale(data, input_dim):
     X = X_scale.transform(X)
     y = y_scale.transform(y)
 
-    joblib.dump(scalerX, 'scalerX.save') 
-    joblib.dump(scalerY, 'scalerY.save') 
+    joblib.dump(X_scale, 'scalerX.save') 
+    joblib.dump(y_scale, 'scalerY.save') 
     return X, y
     
 

@@ -220,7 +220,7 @@ def getTime():
             if row["busStop"] == 6001 or row['busStop'] == 7001:
                 last_dt =  row['socket_datetime']
                 df.at[index, 'time_taken'] = 0
-            elif row['busStop'] != 0:
+            else:
                 df.at[index, 'time_taken'] = int((pd.to_datetime(row['socket_datetime']) - last_dt).total_seconds())
 
         df['minuteOfDay'] = (df['socket_datetime'].dt.hour) * 60 + df['socket_datetime'].dt.minute
