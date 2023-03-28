@@ -106,22 +106,20 @@ def cleanDirection():
         indexToDrop = []
         #remove those that is not in full order
         for index, row in df.iterrows():
-            if row['socket_date'] != last_date:
+            if row['busStop'] ==  6001:
                 last_date = row['socket_date']
-                if (df.shift(1).loc[index]['busStop'] != 6031 or df.shift(1).loc[index]['busStop'] != 7035):
-                    indexToDrop.append({'depature':999,'index': index})
-            elif row['busStop'] ==  6001:
                 check = True
                 for i in range(1, 31):
-                    if (df.shift(-i).loc[index]['busStop'] != (6001 + i)):
+                    if (df.shift(-i).loc[index]['busStop'] != (6001 + i) or df.shift(-i).loc[index]['socket_date'] != last_date):
                         check = False
                         break
                 if not check:
                     indexToDrop.append({'depature':6001,'index': index})
             elif row['busStop'] ==  7001:
+                last_date = row['socket_date']
                 check = True
                 for i in range(1, 35):
-                    if df.shift(-i).loc[index]['busStop'] != (7001 + i):
+                    if df.shift(-i).loc[index]['busStop'] != (7001 + i) or df.shift(-i).loc[index]['socket_date'] != last_date:
                         check = False
                         break
                 if not check:

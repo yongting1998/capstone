@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 import numpy as np
-
+import math
+from datetime import date
 
 fKulaiToLarkin = open('../../dataset/KulaiToLarkin.json')
 KulaiToLarkinData = json.load(fKulaiToLarkin)
@@ -92,5 +93,150 @@ def busStop():
 
         df.to_csv('./' + x + '_busStop.csv', index=False)
 
+
+def cleanDirection():
+    colNames=['index','socket_date','socket_datetime','lat','long','distance','speed','direction','busStop']
+
+    dataNames=['202203']
+    for x in dataNames:
+        print(x)
+        df = pd.read_csv ('./' + x + '_busStop.csv', names=colNames, skiprows=1)
+        df = df.drop(['index'], axis=1)
+        df['busStop'] = df['busStop'].astype(int)
+        df['socket_date'] = pd.to_datetime(df['socket_date'])
+        last_date = df.iloc[0]['socket_date']
+        df = df.reset_index()
+        indexToDrop = []
+        lastBusStop = 0
+        nextBusStop = 0
+        #remove those that is not in full order
+        for index, row in df.iterrows():
+            print(index)
+            if row['busStop'] ==  6001:
+                check = True
+                checkAll = True
+                count = -1
+                last_date = row['socket_date']
+                nextBusStop = getNextBusStop(6001)
+                busStopCount = 1
+                while checkAll:
+                    if (df.shift(count).loc[index]['busStop'] != 0):
+                        if df.shift(count).loc[index]['busStop'] != nextBusStop or df.shift(count).loc[index]['socket_date'] != last_date:
+                            check = False
+                            checkAll = False
+                        else:
+                            busStopCount += 1
+                            nextBusStop = getNextBusStop(nextBusStop)
+                            if(math.floor(nextBusStop / 1000) != 6) or busStopCount == 31:
+                                checkAll = False
+                    count -= 1
+                if not check:
+                    indexToDrop.append({'depature':6001,'index': index})
+                else:
+                    lastBusStop = 6001
+            elif row['busStop'] ==  7001:
+                check = True
+                checkAll = True
+                count = -1
+                last_date = row['socket_date']
+                nextBusStop = getNextBusStop(7001)
+                busStopCount = 1
+                while checkAll:
+                    if (df.shift(count).loc[index]['busStop'] != 0):
+                        if df.shift(count).loc[index]['busStop'] != nextBusStop or df.shift(count).loc[index]['socket_date'] != last_date:
+                            check = False
+                            checkAll = False
+                        else:
+                            busStopCount += 1
+                            nextBusStop = getNextBusStop(nextBusStop)
+                            if(math.floor(nextBusStop / 1000) != 7) or busStopCount == 35:
+                                checkAll = False
+                    count -= 1
+                if not check:
+                    indexToDrop.append({'depature':7001,'index': index})
+                else:
+                    lastBusStop = 7001
+            elif row['busStop'] != 0:
+                if lastBusStop != row['busStop'] - 1:
+                    indexToDrop.append({'depature':999,'index': index})
+                else:
+                    lastBusStop = row['busStop']
+                if row['busStop'] == 6031 or row['busStop'] == 7035:
+                    if df.shift(-1).loc[index]['busStop'] == 0:
+                        indexToDrop.append({'depature': 999, 'index' : index + 1})
+        
+        df = df.reset_index()
+        removeCount = 0
+        endCount = 0
+        for index, row in df.iterrows():
+            print(index)
+            if (row['busStop'] == 6001 or row['busStop'] == 7001) and index != indexToDrop[0]['index']:
+                removeCount = 0
+            if len(indexToDrop) == 0 and removeCount == 0:
+                break
+            if len(indexToDrop) > 0 and index == indexToDrop[0]['index']:
+                #remove until next terminal or next index to drop
+                endCount = 9999999999999999999999
+                removeCount = 1
+                indexToDrop.pop(0)
+
+            if removeCount != 0:
+                df.drop(index, inplace=True)
+                if removeCount == endCount:
+                    removeCount = 0
+                else:
+                    removeCount += 1
+        print(indexToDrop)
+        if df.iloc[-1]['busStop'] == 6001 or df.iloc[-1]['busStop'] == 7001:
+            df = df[:-1]
+        df.to_csv('./' + x + '_clean_direction.csv', index=False)
+
+def getNextBusStop(currentBusStop):
+    if math.floor(currentBusStop / 1000) == 6:
+        if currentBusStop == 6031:
+            return 7001
+        else:
+            return currentBusStop + 1
+    
+    if math.floor(currentBusStop / 1000) == 7:
+        if currentBusStop == 7035:
+            return 6001
+        else:
+            return currentBusStop + 1
+
+def getTime():
+    dataNames=['202203']
+    colNames=['a','b','socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop']
+    for x in dataNames:
+        print(x)
+        df = pd.read_csv ('./' + x + '_clean_direction.csv', names=colNames, skiprows=1)
+        df = df.drop(['a','b'], axis=1)
+        df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
+        df = df.reset_index()
+        last_dt = date.today()
+        for index, row in df.iterrows():
+            print(index)
+            check = False
+            if row["busStop"] == 6001 or row['busStop'] == 7001:
+                last_dt =  row['socket_datetime']
+                df.at[index, 'time_taken'] = 0
+            elif row['busStop'] != 0:
+                df.at[index, 'time_taken'] = int((pd.to_datetime(row['socket_datetime']) - last_dt).total_seconds())
+
+        df['minuteOfDay'] = (df['socket_datetime'].dt.hour) * 60 + df['socket_datetime'].dt.minute
+        df['day_of_week'] = df['socket_datetime'].dt.dayofweek
+
+        df['lat'] = df['lat'].astype(float)
+        df['long'] = df['long'].astype(float)
+        df['direction'] = df['direction'].astype(int)
+        df['busStop'] = df['busStop'].astype(int)
+        df['day_of_week'] = df['day_of_week'].astype(int)
+        df['minuteOfDay'] = df['minuteOfDay'].astype(int)
+
+        df.to_csv('./' + x  + '_time.csv', index=False)
+
+
 # onRoute()
-busStop()
+# busStop()
+# cleanDirection()
+getTime()
