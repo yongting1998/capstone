@@ -13,6 +13,8 @@ from sklearn import metrics
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 
+import joblib
+
 def ann(X_test, y_test, X_train, y_train, batch_size, epoch, input_dim):
         # create ANN model
     model = Sequential()
@@ -36,8 +38,8 @@ def ann(X_test, y_test, X_train, y_train, batch_size, epoch, input_dim):
     MAPE = np.mean(100 * (np.abs(model.predict(X_test))/y_test))
     print(MAPE)
     
-    
     y_pred = model.predict(X_test)
+    model.save('./model')
     return y_pred
 
 def trainParameters(X_test, y_test, X_train, y_train, input_dim):
@@ -81,14 +83,16 @@ def scale(data, input_dim):
     print(y.shape)
 
 
-    scalerX = preprocessing.StandardScaler()
-    scalerY = preprocessing.StandardScaler()
+    scalerX = preprocessing.MinMaxScaler()
+    scalerY = preprocessing.MinMaxScaler()
     X_scale = scalerX.fit(X)
     y_scale = scalerY.fit(y)
 
     X = X_scale.transform(X)
     y = y_scale.transform(y)
 
+    joblib.dump(scalerX, 'scalerX.save') 
+    joblib.dump(scalerY, 'scalerY.save') 
     return X, y
     
 
@@ -109,6 +113,7 @@ X, y = scale(df[['busStop', 'day_of_week','minuteOfDay', 'time_taken']], input_d
 # X, y = scale(df[['busStop', 'day_of_week','minuteOfDay', 'distanceToNext', 'time_taken']], input_dim)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+print(X_test)
 
 trainData(X_test, y_test, X_train, y_train, input_dim)
 #trainParameters(X_test, y_test, X_train, y_train, input_dim)
