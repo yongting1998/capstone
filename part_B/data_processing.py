@@ -66,24 +66,84 @@ def plot():
     for i in range(7001, 7036):
         dataNames.append(str(i))
 
-    cols = ['time_taken']
-    figure, axis = plt.subplots(2,2)
-    figure.suptitle('before cleaning')
-    countX = 0
-    countY = 0
+    countX = 1
+    countY = 1
+    plt.figure(countY)
     for x in dataNames:
         print(x)
         df = pd.read_csv ('../dataset/part_B/dataset_timeOfDay/' + x + '_timeOfDay.csv', names=colNames, skiprows=1)
         df['time_taken'] = df['time_taken'].astype(int)
-        if(int(x) > 6001 and int(x) < 6006):
-            axis[countX, countY].plot(df['socket_date'],df['time_taken'])
-            axis[countX, countY].set_title(x)
-            if(countY == 1):
-                countX += 1
-                countY = 0
+        if countX % 10 == 0:
+            countY += 1
+            plt.figure(countY)
+            countX = 1
+        
+        plt.subplot(3,3,countX).plot(df['socket_date'],df['time_taken'])
+        plt.subplot(3,3,countX).set_title(x)
+        countX += 1
+        df = df[df['time_taken'] > 1000]
+        if not os.path.isfile('../dataset/part_B/outliers.csv'):
+                df.to_csv('../dataset/part_B/outliers.csv', index=False,)
+        else:
+            df.to_csv('../dataset/part_B/outliers.csv', index=False, header=False, mode='a')
+
+    for i in range(1, int(len(dataNames)/9) + 1):
+        plt.figure(i).show()
+        input()
+    # plt.figure(1).show()
+    # input()
+
+def plotExact(busStop):
+    colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken','day_of_week','minuteOfDay']
+    df = pd.read_csv ('../dataset/part_B/dataset_timeOfDay/' + str(busStop) + '_timeOfDay.csv', names=colNames, skiprows=1)
+    fig,ax = plt.subplots()
+    norm = plt.Normalize(1,4)
+    cmap = plt.cm.RdYlGn
+    names = np.array(df[['socket_datetime']])
+    sc = plt.scatter(df['socket_datetime'],df['time_taken'],s=100, cmap=cmap, norm=norm)
+    
+    annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
+                        bbox=dict(boxstyle="round", fc="w"),
+                        arrowprops=dict(arrowstyle="->"))
+    annot.set_visible(False)
+    def update_annot(ind):    
+        pos = sc.get_offsets()[ind["ind"][0]]
+        annot.xy = pos
+        text = "{}, {}".format(" ".join(list(map(str,ind["ind"])))," ".join(str([names[n] for n in ind["ind"]])))
+        annot.set_text(text)
+        annot.get_bbox_patch().set_alpha(0.4)
+    
+
+    def hover(event):
+        vis = annot.get_visible()
+        if event.inaxes == ax:
+            cont, ind = sc.contains(event)
+            if cont:
+                update_annot(ind)
+                annot.set_visible(True)
+                fig.canvas.draw_idle()
             else:
-                countY += 1
+                if vis:
+                    annot.set_visible(False)
+                    fig.canvas.draw_idle()
+
+    fig.canvas.mpl_connect("motion_notify_event", hover)
+
     plt.show()
+
+def checkOutliers(busStop, timeTaken):
+    colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken','day_of_week','minuteOfDay']
+    df = pd.read_csv ('../dataset/part_B/dataset_timeOfDay/' + str(busStop) + '_timeOfDay.csv', names=colNames, skiprows=1)
+    df = df[df['time_taken'] > timeTaken]
+    df = df.sort_values(by=['time_taken'])
+    df.to_csv('../dataset/part_B/checkOutliersTimeTaken.csv', index=False,)
+    df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
+    df['hour'] = df['socket_datetime'].dt.hour
+    for i in range(24):
+        print("HOUR " + str(i) + ":  " + str(len(df[df['hour'] == i])))
+        
+    
+
 
 def average_travelling_time():
     colNames=['socket_date', 'socket_datetime', 'lat', 'long', 'distance', 'speed', 'direction', 'busStop', 'time_taken','day_of_week','minuteOfDay']
@@ -118,5 +178,9 @@ def average_travelling_time():
 
 # time_taken()
 # timeOfDay()
-# outlier()
-average_travelling_time()
+# plot()
+#average_travelling_time()
+
+
+# plotExact(6017)
+checkOutliers(6017, 200)
