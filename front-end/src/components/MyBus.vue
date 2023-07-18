@@ -3,7 +3,7 @@
     <h1>P411 Bus Prediction Model</h1>
     <div class="container">
       <h3>Bus Stop: {{ selectedBusStop }}</h3>
-      <p v-if="time">{{ time }} mins</p>
+      <p v-if="time">{{ time }}</p>
       <div class="direction-button-wrapper">
         <button
           class="button--direction"
@@ -23,12 +23,12 @@
       <bus-stop-list
         :busStopList="KulaiToLarkinData"
         v-if="selectedDirection == 1"
-        @selectedBusStop="selectBusStop"
+        @selectedBusStop="selectBusStopFromKulai"
       />
       <bus-stop-list
         :busStopList="LarkinToKulaiData"
         v-if="selectedDirection == 2"
-        @selectedBusStop="selectBusStop"
+        @selectedBusStop="selectBusStopFromLarkin"
       />
     </div>
   </section>
@@ -50,12 +50,18 @@ export default {
     };
   },
   methods: {
-    selectBusStop(busStop) {
-      this.selectedBusStop = busStop;
-      this.getTiming();
+    selectBusStopFromKulai(details) {
+      this.selectedBusStop = details.busStop;
+      const busStopCode = 6001 + details.index
+      this.getTiming(busStopCode);
     },
-    getTiming() {
-      fetch("http://127.0.0.1:105/")
+    selectBusStopFromLarkin(details){
+      this.selectedBusStop = details.busStop;
+      const busStopCode = 7001 + details.index
+      this.getTiming(busStopCode);
+    },
+    getTiming(busStopCode) {
+      fetch("http://127.0.0.1:105?busStop=" + busStopCode)
         .then((response) => response.json())
         .then((data) => {
           console.log(data.time);

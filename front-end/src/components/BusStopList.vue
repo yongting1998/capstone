@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     selectBusStop(index, busStop) {
-      this.$emit("selectedBusStop", busStop);
+      this.$emit("selectedBusStop", { index: index, busStop: busStop });
       this.isActive = index;
     },
   },
