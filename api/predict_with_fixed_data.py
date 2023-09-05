@@ -24,6 +24,8 @@ import joblib
 
 
 def getNextDepatureTiming(busStopCode):
+    
+    # now = datetime.now().replace(year = 2021,month = 5, day = 3, hour = 14, second = 0, microsecond=0)
     now = datetime.now().replace(year = 2021,month = 5, day = 3, second = 0, microsecond=0)
     minuteOfDay = now.hour * 60 + now.minute
     if(busStopCode < 7001):
@@ -56,6 +58,7 @@ def fetchLiveData():
     df['socket_datetime'] = pd.to_datetime(df['socket_datetime'])
     df.sort_values(by='socket_datetime', inplace = True)
 
+    # end = datetime.now().replace(year = 2021,month = 5, day = 3, hour = 14, second = 0, microsecond=0)
     end = datetime.now().replace(year = 2021,month = 5, day = 3, second = 0, microsecond=0)
     start = end.replace(hour = 0)
 
