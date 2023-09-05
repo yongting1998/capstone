@@ -1,46 +1,13 @@
-# capstone
-capstone project
+To Prof Sye Loong.
 
-df["direction"]
+Please go to branch syeloong.
 
-0 = invalid
-1 = Kulai to Larkin
-2 = Larkin to Kulai
-3 = Kulai Station
-4 = Larkin Station
+please install dependencies in requirements.txt please run api/predict_with_fixed_data.py
 
-route #6 is Kulai To Larkin
-route #7 is Larkin To Kulai
+please note that this uses fixed date, as it is retrieving data from full_tooSlow.csv instead of live-data. However, it is using the current time.
 
-1. get direction first (dataset_direction)
-2. get if points are on route (dataset_onRoute)
-3. get bus stops and remove repeated bus stops, take depature only
-4. dataset get clean direction, sometimes bus u-turn halfway, only get full data from terminal to terminal
+if you want to use a pre-defined time. please take a look at line 28 and line 61 for example. (hour = 14)
 
-4. get time taken from station to bus stop (seconds)
-5. remove outliers (dataset_outlier)
-6. get time of day(dataset_timeOfDay)
-7. get time of day in minutes (dataset_minute)
+you will find the front-end here. https://capstone-five-nu.vercel.app/
 
-
-talk about the diff models
-bus stop to bus stop
-use distance as parameter
-
-
-**cleaning data factors**
-sometimes bus suddenly u-turn
-sometimes does not end at terminal
-gps faulty, sometimes don't capture points
-sometimes bus starts halfway in the route
-sometimes bus ends halfway today, starts next stop tomorrow (time taken calculated very long)
-e.g. today end at 6030
-tmrw start at 6031
-
-
-**bullshit**
-
-try different architecture for NN
-try different activation functions (explain why this or that is better)
-try different models
-try different batch list and epoch
+I hope this is sufficient. Thank you.
